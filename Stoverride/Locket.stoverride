@@ -1,0 +1,27 @@
+#!name=Locket_Gold
+#!desc=Crack By LC
+
+name: Locket_Gold
+desc: Crack By LC
+
+http:
+  mitm:
+    - "api.revenuecat.com"
+  script:
+    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
+      name: revenuecat
+      type: response
+      require-body: true
+      timeout: 60
+    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
+      name: deleteHeader
+      type: request
+      timeout: 60
+
+script-providers:
+  revenuecat:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locketgold.js
+    interval: 86400
+  deleteHeader:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.js
+    interval: 86400
