@@ -1,0 +1,66 @@
+#!name=YouTube + Spotify + SoundCloud
+#!desc=Unlock YouTube Premium-like (PIP, nền), Spotify Premium, SoundCloud Go+
+
+name: YouTube + Spotify + SoundCloud
+desc: Unlock YouTube premium, Spotify premium, SoundCloud Go+
+
+http:
+  mitm:
+    - "api-mobile.soundcloud.com"
+    - "spclient.wg.spotify.com"
+    - "-redirector*.googlevideo.com"
+    - "*.googlevideo.com"
+    - "www.youtube.com"
+    - "s.youtube.com"
+    - "youtubei.googleapis.com"
+
+  script:
+    - match: https://api-mobile.soundcloud.com/configuration/ios
+      name: SoundCloudGo+1
+      type: response
+      require-body: true
+      timeout: 10
+
+    - match: ^https:\/\/spclient\.wg\.spotify\.com\/(artistview\/v1\/artist|album-entity-view\/v2\/album)\/
+      name: Spotify(iOS15)1
+      type: request
+      require-body: false
+      timeout: 10
+
+    - match: ^https:\/\/spclient\.wg\.spotify\.com\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
+      name: Spotify(iOS15)2
+      type: response
+      require-body: true
+      binary-mode: true
+      timeout: 10
+
+    - match: ^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)
+      name: YouTubequguanggao1
+      type: response
+      require-body: true
+      binary-mode: true
+      timeout: 10
+
+  rewrite:
+    - (^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
+    - ^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad - reject-200
+    - ^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads - reject-200
+    - ^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) - reject-200
+    - ^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext - reject-200
+
+script-providers:
+  SoundCloudGo+1:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/soundcloud.js
+    interval: 86400
+
+  Spotify(iOS15)1:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/spotify-json.js
+    interval: 86400
+
+  Spotify(iOS15)2:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/spotify-proto.js
+    interval: 86400
+
+  YouTubequguanggao1:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/youtube.response.js
+    interval: 86400
