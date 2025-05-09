@@ -68,4 +68,45 @@ rule-providers:
   Spotify: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Spotify.yaml}
   Emby: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Emby.yaml}
   Steam: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Steam.yaml}
-  Epic:
+  Epic: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Epic.yaml}
+  Apple: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Apple.yaml}
+  APNs: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/APNs.yaml}
+  BiliBili: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Bilibili.yaml}
+  Bahamut: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Bahamut.yaml}
+  Netflix: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Netflix.yaml}
+  Disney: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Disney.yaml}
+  PrimeVideo: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/PrimeVideo.yaml}
+  HBO: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/HBO.yaml}
+  TikTok: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/TikTok.yaml}
+  ProxyGFW: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/ProxyGFW.yaml}
+  Lan: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Lan.yaml}
+
+  rules:
+  - RULE-SET,APNs,DIRECT
+  - RULE-SET,Reject,REJECT
+  - RULE-SET,OpenAI,OpenAI
+  - RULE-SET,Github,Microsoft
+  - RULE-SET,OneDrive,Microsoft
+  - RULE-SET,Microsoft,Microsoft
+  - RULE-SET,Youtube,Google
+  - RULE-SET,Google,Google
+  - RULE-SET,Twitter,Twitter
+  - RULE-SET,Telegram,Telegram
+  - RULE-SET,Spotify,Spotify
+  - RULE-SET,Steam,Game
+  - RULE-SET,Epic,Game
+  - RULE-SET,Emby,Emby
+  - RULE-SET,BiliBili,Bilibili
+  - RULE-SET,Bahamut,Quốc tế
+  - RULE-SET,Netflix,Quốc tế
+  - RULE-SET,Disney,Quốc tế
+  - RULE-SET,PrimeVideo,Quốc tế
+  - RULE-SET,HBO,Quốc tế
+  - RULE-SET,TikTok,Quốc tế
+  - RULE-SET,ProxyGFW,Quốc tế
+  - RULE-SET,Apple,Apple
+  - RULE-SET,Lan,DIRECT
+  - GEOIP,CN,DIRECT
+  - MATCH,Dự phòng
+
+
