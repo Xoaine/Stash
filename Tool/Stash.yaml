@@ -1,0 +1,71 @@
+# Tác giả: https://github.com/Repcz
+# Kênh Telegram: https://t.me/QVQ_Channel
+# Các dòng bắt đầu bằng ';' hoặc '#' hoặc '//' là chú thích
+
+# ================ CẤU HÌNH CHÍNH ================
+
+chế-độ: rule                 # Chế độ hoạt động: rule (chia theo quy tắc) / global (toàn bộ đi proxy) / direct (toàn bộ đi thẳng)
+log-level: info              # Mức độ log: silent / error / warning / info / debug
+
+# ================ CẤU HÌNH DNS ================
+dns:
+  default-nameserver: [223.5.5.5, 119.29.29.29]     # DNS để phân giải tên miền (dạng IP)
+  fake-ip-filter: ['*.lan', '*.qq.com', '*.163.com', '*.music.163.com', 'localhost.*']   # Không fake IP với các miền này
+  nameserver: [https://doh.pub/dns-query, https://dns.alidns.com/dns-query]              # DNS chính (DoH)
+
+# ================ SUBSCRIPTION =================
+subscribe-url: https://example.com/clash-sub.yaml   # Link hiển thị trên app Stash (bạn thay bằng link thật)
+
+# ================ DANH SÁCH MÁY CHỦ (NODE) ================
+proxy-providers:
+  Subscribe:
+    interval: 86400
+    benchmark-timeout: 3
+    benchmark-url: 'http://www.gstatic.com/generate_204'
+    url: https://example.com/clash-sub.yaml          # THAY bằng link thực tế của bạn
+    path: ./proxy_providers/Subscribe.yaml
+    health-check:
+      enable: true
+      url: http://www.gstatic.com/generate_204
+      interval: 1800
+
+# ================ NHÓM PROXY (CHIA NHÓM CHUYÊN DỤNG) ================
+proxy-groups:
+  - {name: Thủ công chọn, type: select, use: [Subscribe], proxies: [🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, DIRECT]}
+
+  - {name: Quốc tế, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Google, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Apple, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Microsoft, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Telegram, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Twitter, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: OpenAI, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Spotify, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Emby, type: select, use: [Subscribe], proxies: [🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, DIRECT]}
+  - {name: Bilibili, type: select, proxies: [DIRECT, 🇭🇰 Hồng Kông, 🇹🇼 Đài Loan]}
+  - {name: Game, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+  - {name: Dự phòng, type: select, proxies: [Thủ công chọn, 🇭🇰 Hồng Kông, 🇺🇸 Mỹ, 🇸🇬 Singapore, 🇯🇵 Nhật, 🇹🇼 Đài Loan, Tự động, DIRECT]}
+
+  # Tự động phân loại theo quốc gia
+  - {name: 🇭🇰 Hồng Kông, type: url-test, use: [Subscribe], filter: "🇭🇰|香港|HK", lazy: true, interval: 900}
+  - {name: 🇺🇸 Mỹ, type: url-test, use: [Subscribe], filter: "🇺🇸|美国|US", lazy: true, interval: 900}
+  - {name: 🇸🇬 Singapore, type: url-test, use: [Subscribe], filter: "🇸🇬|新加坡|SG", lazy: true, interval: 900}
+  - {name: 🇯🇵 Nhật, type: url-test, use: [Subscribe], filter: "🇯🇵|日本|JP", lazy: true, interval: 900}
+  - {name: 🇹🇼 Đài Loan, type: url-test, use: [Subscribe], filter: "🇹🇼|台湾|TW", lazy: true, interval: 900}
+  - {name: Tự động, type: url-test, use: [Subscribe], lazy: true, interval: 900}
+
+# ================ DANH SÁCH QUY TẮC (RULE SETS) ================
+rule-providers:
+  Reject: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Reject.yaml}
+  OpenAI: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/OpenAI.yaml}
+  Github: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Github.yaml}
+  Microsoft: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Microsoft.yaml}
+  OneDrive: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/OneDrive.yaml}
+  Google: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Google.yaml}
+  Youtube: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/YouTube.yaml}
+  Telegram: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Telegram.yaml}
+  Twitter: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Twitter.yaml}
+  Spotify: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Spotify.yaml}
+  Emby: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Emby.yaml}
+  Steam: {type: http, behavior: classical, interval: 86400, url: https://github.com/Repcz/Tool/raw/X/Stash/Rules/Steam.yaml}
+  Epic:
