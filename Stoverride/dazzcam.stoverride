@@ -1,0 +1,18 @@
+name: DazzCamProOverride
+desc: Bypass Dazz Cam Pro Subscription
+
+http:
+  mitm:
+    - "api.revenuecat.com"
+
+script:
+  - match: ^https:\/\/api\.revenuecat\.com\/v1\/subscribers\/.*
+    name: fakeProSubscription
+    type: response
+    require-body: true
+    timeout: 60
+
+script-providers:
+  fakeProSubscription:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/dazz_pro.js
+    interval: 86400
