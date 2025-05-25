@@ -1,0 +1,75 @@
+#!name=
+#!desc=Unlock YouTube Premium, Spotify Premium, Locket Gold
+
+name: Stater Pack
+desc: Unlock YouTube premium, Spotify premium, Locket Gold
+
+http:
+  mitm:
+    - "spclient.wg.spotify.com"
+    - "-redirector*.googlevideo.com"
+    - "*.googlevideo.com"
+    - "www.youtube.com"
+    - "s.youtube.com"
+    - "youtubei.googleapis.com"
+    - "api.revenuecat.com"
+
+  script:
+    - match: ^https:\/\/spclient\.wg\.spotify\.com\/(artistview\/v1\/artist|album-entity-view\/v2\/album)\/
+      name: Spotify(iOS15)1
+      type: request
+      require-body: false
+      timeout: 10
+
+    - match: ^https:\/\/spclient\.wg\.spotify\.com\/(bootstrap\/v1\/bootstrap|user-customization-service\/v1\/customize)$
+      name: Spotify(iOS15)2
+      type: response
+      require-body: true
+      binary-mode: true
+      timeout: 10
+
+    - match: ^https?:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)
+      name: YouTubequguanggao1
+      type: response
+      require-body: true
+      binary-mode: true
+      timeout: 10
+
+    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
+      name: revenuecat
+      type: response
+      require-body: true
+      timeout: 60
+
+    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
+      name: deleteHeader
+      type: request
+      timeout: 60
+
+  rewrite:
+    - (^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
+    - ^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad - reject-200
+    - ^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads - reject-200
+    - ^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) - reject-200
+    - ^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext - reject-200
+
+script-providers:
+  Spotify(iOS15)1:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/spotify-json.js
+    interval: 86400
+
+  Spotify(iOS15)2:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/spotify-proto.js
+    interval: 86400
+
+  YouTubequguanggao1:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/youtube.response.js
+    interval: 86400
+
+  revenuecat:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locketgold.js
+    interval: 86400
+
+  deleteHeader:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.js
+    interval: 86400
