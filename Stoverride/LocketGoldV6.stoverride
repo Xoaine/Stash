@@ -22,7 +22,7 @@ http:
 
 script-providers:
   revenuecat:
-    url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locketgold.js
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locket_Ohoang7.stash.js
     interval: 86400
 
   deleteHeader:
