@@ -1,0 +1,26 @@
+name: "Locket Gold 🏅- NightmarketServer"
+description: "Mở khoá premium cho ứng dụng Locket Widget"
+author: "Nightmarket Server"
+version: "6"
+icon: "https://raw.githubusercontent.com/NightmarketServer/Locket/main/icon.png"
+update-url: "https://raw.githubusercontent.com/NightmarketServer/Locket/main/LocketGoldV6.stoverride"
+
+scriptings:
+  http-response:
+    - name: revenuecat
+      match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
+      script-url: https://raw.githubusercontent.com/vuong2023/shad/main/js/Locket_Ohoang7.js
+      timeout: 60
+      requires-body: true
+      max-size: -1
+
+  http-request:
+    - name: deleteHeader
+      match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
+      script-url: https://raw.githubusercontent.com/vuong2023/shad/main/js/deleteHeader.js
+      timeout: 60
+
+mitm:
+  enable: true
+  hostnames:
+    - api.revenuecat.com
