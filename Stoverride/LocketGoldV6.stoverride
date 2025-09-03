@@ -1,26 +1,30 @@
-name: "Locket Gold 🏅- NightmarketServer"
-description: "Mở khoá premium cho ứng dụng Locket Widget"
-author: "Nightmarket Server"
-version: "6"
-icon: "https://raw.githubusercontent.com/NightmarketServer/Locket/main/icon.png"
-update-url: "https://raw.githubusercontent.com/xoaine/stash/main/LocketGoldV6.stoverride"
+#!name=Locket Gold 🏅
+#!desc=Unlock Locket Premium (Gold) - port by xoaine
 
-scriptings:
-  http-response:
-    - name: revenuecat
-      match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
-      script-url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locket_Ohoang7.stash.js
-      timeout: 60
-      requires-body: true
-      max-size: -1
+name: Locket Gold
+desc: Unlock Locket Premium (Gold)
 
-  http-request:
-    - name: deleteHeader
-      match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
-      script-url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.stash.js
+http:
+  mitm:
+    - "api.revenuecat.com"
+
+  script:
+    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
+      name: revenuecat
+      type: response
+      require-body: true
       timeout: 60
 
-mitm:
-  enable: true
-  hostnames:
-    - api.revenuecat.com
+    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
+      name: deleteHeader
+      type: request
+      timeout: 60
+
+script-providers:
+  revenuecat:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locketgold.js
+    interval: 86400
+
+  deleteHeader:
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.js
+    interval: 86400
