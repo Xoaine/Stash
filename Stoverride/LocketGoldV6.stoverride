@@ -26,5 +26,5 @@ script-providers:
     interval: 86400
 
   deleteHeader:
-    url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.js
+    url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.stash.js
     interval: 86400
