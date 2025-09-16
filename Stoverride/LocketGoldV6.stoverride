@@ -1,24 +1,25 @@
 #!name=Locket Gold 🏅
 #!desc=Unlock Locket Premium (Gold) - port by xoaine
 
-name: Locket Gold
-desc: Unlock Locket Premium (Gold)
+name: "Locket Gold 🏅"
+desc: "Unlock Locket Premium (Gold) - port by xoaine"
+
+general:
+  user-agent: "Locket/1.0.0 (iPhone; iOS 26; Scale/3.00)"
 
 http:
-  mitm:
-    - "api.revenuecat.com"
-
   script:
     - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
       name: revenuecat
       type: response
       require-body: true
-      timeout: 60
+      timeout: 120
+      max-size: -1
 
     - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
       name: deleteHeader
       type: request
-      timeout: 60
+      timeout: 120
 
 script-providers:
   revenuecat:
@@ -28,3 +29,8 @@ script-providers:
   deleteHeader:
     url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.stash.js
     interval: 86400
+
+mitm:
+  hostnames:
+    - api.revenuecat.com
+    - raw.githubusercontent.com
