@@ -1,34 +1,31 @@
-#!name=Locket Gold 🏅
-#!desc=Unlock Locket Premium (Gold) - port by xoaine
+#!name=Locket Gold 🏅 - NightmarketServer
+#!desc=Mở khoá premium cho ứng dụng Locket Widget
 
-name: "Locket Gold 🏅"
-desc: "Unlock Locket Premium (Gold) - port by xoaine"
-
-general:
-  user-agent: "Locket/1.0.0 (iPhone; iOS 26; Scale/3.00)"
-
-script-providers:
-  revenuecat:
-    url: https://raw.githubusercontent.com/xoaine/stash/main/js/Locket_Ohoang7.stash.js
-    interval: 86400
-  deleteHeader:
-    url: https://raw.githubusercontent.com/xoaine/stash/main/js/deleteHeader.stash.js
-    interval: 86400
+name: Locket Gold 🏅 - NightmarketServer
+desc: Mở khoá premium cho ứng dụng Locket Widget
 
 http:
+  mitm:
+    - "api.revenuecat.com"
+    - "raw.githubusercontent.com"
+
   script:
     - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
       name: revenuecat
       type: response
       require-body: true
       timeout: 120
-      max-size: -1
+
     - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
       name: deleteHeader
       type: request
       timeout: 120
 
-mitm:
-  hostnames:
-    - api.revenuecat.com
-    - raw.githubusercontent.com
+script-providers:
+  revenuecat:
+    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locket_fix.js
+    interval: 86400
+
+  deleteHeader:
+    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/deleteHeader.js
+    interval: 86400
