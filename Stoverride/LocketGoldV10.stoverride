@@ -1,8 +1,12 @@
 #!name=Locket Gold 🏅 - NightmarketServer
 #!desc=Mở khoá premium cho ứng dụng Locket Widget
+#!version=8
 
 name: Locket Gold 🏅 - NightmarketServer
 desc: Mở khoá premium cho ứng dụng Locket Widget
+
+general:
+  user-agent: "Locket/1.0.0 (iPhone; iOS 26; Scale/3.00)"
 
 http:
   mitm:
@@ -10,13 +14,13 @@ http:
     - "raw.githubusercontent.com"
 
   script:
-    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts$|subscribers\/[^/]+$)
+    - match: ^https:\/\/api\.revenuecat\.com\/.*\/(receipts$|subscribers\/[^/]+$)
       name: revenuecat
       type: response
       require-body: true
       timeout: 120
 
-    - match: ^https:\/\/api\.revenuecat\.com\/.+\/(receipts|subscribers)
+    - match: ^https:\/\/api\.revenuecat\.com\/.*\/(receipts|subscribers)
       name: deleteHeader
       type: request
       timeout: 120
