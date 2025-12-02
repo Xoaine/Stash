@@ -23,9 +23,9 @@ http:
 
 script-providers:
   revenuecat:
-    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/Locket_fix.js
+    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/locketfix1.js
     interval: 86400
 
   deleteHeader:
-    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/deleteHeader.js
+    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/header.js
     interval: 86400
