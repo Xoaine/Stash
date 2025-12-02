@@ -5,6 +5,15 @@
 name: Locket Gold 🏅 - NightmarketServer
 desc: Mở khoá premium cho ứng dụng Locket Widget
 
+script-providers:
+  revenuecat:
+    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/locketfix1.js
+    interval: 86400
+
+  deleteHeader:
+    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/header.js
+    interval: 86400
+
 general:
   user-agent: "Locket/1.0.0 (iPhone; iOS 26; Scale/3.00)"
 
@@ -18,18 +27,11 @@ http:
       name: revenuecat
       type: response
       require-body: true
+      binary-mode: true
       timeout: 120
 
     - match: ^https:\/\/api\.revenuecat\.com\/.*\/(receipts|subscribers)
       name: deleteHeader
       type: request
+      binary-mode: true
       timeout: 120
-
-script-providers:
-  revenuecat:
-    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/locketfix1.js
-    interval: 86400
-
-  deleteHeader:
-    url: https://raw.githubusercontent.com/NightmarketServer/Locket/refs/heads/main/header.js
-    interval: 86400
