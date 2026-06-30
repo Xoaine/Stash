@@ -1,59 +1,19 @@
-name: "🔓 Doka Cam Pro Override V2"
-desc: |-
-  Intercept Apple StoreKit receipt verification + yindoka.com backend
-  để fake pro subscription cho Doka Cam (id6751240418)
-author: "local"
-version: "2.0"
+name: "🔓 Doka Cam Pro Override V3"
+desc: "Unlock Doka Cam Pro (Intercept yindoka.com)"
+author: local
+version: "3.0"
 
 http:
   ca: ""
   ca-passphrase: ""
   mitm:
-    - sandbox.itunes.apple.com
-    - buy.itunes.apple.com
-    - mzstorekit.itunes.apple.com
-    - www.yindoka.com
     - "*.yindoka.com"
-
+    - "www.yindoka.com"
+  
   script-providers:
-    doka-iap-spoof:
-      match: "^https://(sandbox|buy)\\.itunes\\.apple\\.com/verifyReceipt"
-      type: response
-      require-body: true
-      timeout: 10
-      script: |
-        const now = Date.now();
-        const expires = 4102444800000;
-        const txId = "20000009999" + String(now).slice(-7);
-        const productId = "com.yindoka.dokacam.pro.monthly";
-        const bundleId = "com.yindoka.dokacam";
-        const payload = {
-          status: 0,
-          environment: "Sandbox",
-          receipt: {
-            receipt_type: "ProductionSandbox",
-            bundle_id: bundleId,
-            application_version: "1.0.0",
-            receipt_creation_date_ms: String(now),
-            in_app: [{
-                quantity: "1", product_id: productId, transaction_id: txId, original_transaction_id: txId,
-                purchase_date_ms: String(now - 1000), original_purchase_date_ms: String(now - 1000),
-                expires_date_ms: String(expires), is_trial_period: "false", is_in_intro_offer_period: "false", in_app_ownership_type: "PURCHASED"
-            }]
-          },
-          latest_receipt_info: [{
-              product_id: productId, transaction_id: txId, original_transaction_id: txId,
-              purchase_date_ms: String(now - 1000), original_purchase_date_ms: String(now - 1000),
-              expires_date_ms: String(expires), is_trial_period: "false", is_in_intro_offer_period: "false",
-              in_app_ownership_type: "PURCHASED", subscription_group_identifier: "20000001"
-          }],
-          latest_receipt: "STASH_DOKA_OVERRIDE",
-          pending_renewal_info: [{ auto_renew_product_id: productId, product_id: productId, auto_renew_status: "1", is_in_billing_retry_period: "0" }]
-        };
-        $done({ status: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-
-    doka-yindoka-override:
-      match: "^https://(www\\.)?yindoka\\.com/"
+    doka-vip-patch:
+      # Sửa lại regex match để bắt CHÍNH XÁC url vip-detail từ screenshot
+      match: "https://www\\.yindoka\\.com/apple/vip-detail"
       type: response
       require-body: true
       timeout: 10
@@ -61,45 +21,52 @@ http:
         let body;
         try {
           body = JSON.parse($response.body);
+          if (body.data) {
+            body.data.is_vip = true;
+            body.data.vip_type = "pro";
+            body.data.remaining_compose_count = 9999;
+            body.data.remaining_count = 9999;
+            body.data.remaining_filter_count = 9999;
+            body.data.expire_time = "2099-12-31T23:59:59Z";
+            
+            // Xóa package free nếu có, thêm package fake pro
+            body.data.packages = []; 
+          } else {
+            // Đề phòng API trả về thẳng Object thay vì bọc trong data
+            body.is_vip = true;
+            body.vip_type = "pro";
+            body.remaining_compose_count = 9999;
+            body.remaining_count = 9999;
+            body.remaining_filter_count = 9999;
+            body.expire_time = "2099-12-31T23:59:59Z";
+          }
+          
+          $done({
+            body: JSON.stringify(body)
+          });
         } catch (e) {
           $done({});
-          return;
         }
 
-        function patch(obj) {
-          if (!obj || typeof obj !== "object") return;
-          const boolKeys = [
-            "isPro","is_pro","pro","vip","premium",
-            "subscribed","hasSubscription","hasPro",
-            "isVip","is_vip","isActive","is_active"
-          ];
-          const strKeys = [
-            "plan","tier","type","level",
-            "subscription_type","subscription_status",
-            "memberType","member_type","vip_type"
-          ];
-          const dateKeys = [
-            "expires_at","expired_at","expire_time",
-            "subscription_end","end_date","expireDate"
-          ];
-          const intKeys = [
-            "remaining_compose_count", "remaining_count", "remaining_filter_count", "freeAIComposeCount", "freeAIFilterCount"
-          ];
-          
-          for (const k of Object.keys(obj)) {
-            if (boolKeys.includes(k)) { obj[k] = true; continue; }
-            if (dateKeys.includes(k)) { obj[k] = "2099-12-31T23:59:59Z"; continue; }
-            if (strKeys.includes(k) && typeof obj[k] === "string") { obj[k] = "pro"; continue; }
-            if (strKeys.includes(k) && typeof obj[k] === "number") { obj[k] = 2; continue; }
-            if (intKeys.includes(k)) { obj[k] = 9999; continue; }
-            if (typeof obj[k] === "object") patch(obj[k]);
+    doka-check-sub-patch:
+      match: "https://www\\.yindoka\\.com/apple/check-subscription-status"
+      type: response
+      require-body: true
+      timeout: 10
+      script: |
+        let body;
+        try {
+          body = JSON.parse($response.body);
+          if (body.data) {
+             body.data.is_vip = true;
+             body.data.hasSubscribed = true;
+             body.data.subscription_status = "pro";
+          } else {
+             body.is_vip = true;
+             body.hasSubscribed = true;
+             body.subscription_status = "pro";
           }
+          $done({ body: JSON.stringify(body) });
+        } catch(e) {
+          $done({});
         }
-
-        patch(body);
-
-        $done({
-          status: $response.status,
-          headers: $response.headers,
-          body: JSON.stringify(body)
-        });
