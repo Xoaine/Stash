@@ -1,7 +1,7 @@
-name: "🔓 Doka Cam Pro Override V4"
+name: "🔓 Doka Cam Pro Override V5"
 desc: "Unlock Doka Cam Pro (Intercept yindoka.com)"
 author: local
-version: "4.0"
+version: "5.0"
 
 http:
   ca: ""
@@ -10,7 +10,7 @@ http:
     - "*.yindoka.com"
     - "www.yindoka.com"
 
-  # ĐÂY LÀ PHẦN BỊ THIẾU Ở BẢN TRƯỚC: Khai báo ánh xạ URL với Script
+  # Cú pháp đúng: phần "script" nằm trong "http"
   script:
     - match: "^https://www\\.yindoka\\.com/apple/vip-detail"
       name: doka-vip-patch
@@ -24,49 +24,49 @@ http:
       require-body: true
       timeout: 10
 
-  # Định nghĩa nội dung Script
-  script-providers:
-    doka-vip-patch:
-      payload: |
-        let body;
-        try {
-          body = JSON.parse($response.body);
-          if (body.data) {
-            body.data.is_vip = true;
-            body.data.vip_type = "pro";
-            body.data.remaining_compose_count = 9999;
-            body.data.remaining_count = 9999;
-            body.data.remaining_filter_count = 9999;
-            body.data.expire_time = "2099-12-31T23:59:59Z";
-            body.data.packages = []; 
-          } else {
-            body.is_vip = true;
-            body.vip_type = "pro";
-            body.remaining_compose_count = 9999;
-            body.remaining_count = 9999;
-            body.remaining_filter_count = 9999;
-            body.expire_time = "2099-12-31T23:59:59Z";
-          }
-          $done({ body: JSON.stringify(body) });
-        } catch (e) {
-          $done({});
+# Cú pháp đúng: phần "script-providers" nằm cùng cấp với "http"
+script-providers:
+  doka-vip-patch:
+    data: |
+      let body;
+      try {
+        body = JSON.parse($response.body);
+        if (body.data) {
+          body.data.is_vip = true;
+          body.data.vip_type = "pro";
+          body.data.remaining_compose_count = 9999;
+          body.data.remaining_count = 9999;
+          body.data.remaining_filter_count = 9999;
+          body.data.expire_time = "2099-12-31T23:59:59Z";
+          body.data.packages = []; 
+        } else {
+          body.is_vip = true;
+          body.vip_type = "pro";
+          body.remaining_compose_count = 9999;
+          body.remaining_count = 9999;
+          body.remaining_filter_count = 9999;
+          body.expire_time = "2099-12-31T23:59:59Z";
         }
+        $done({ body: JSON.stringify(body) });
+      } catch (e) {
+        $done({});
+      }
 
-    doka-check-sub-patch:
-      payload: |
-        let body;
-        try {
-          body = JSON.parse($response.body);
-          if (body.data) {
-             body.data.is_vip = true;
-             body.data.hasSubscribed = true;
-             body.data.subscription_status = "pro";
-          } else {
-             body.is_vip = true;
-             body.hasSubscribed = true;
-             body.subscription_status = "pro";
-          }
-          $done({ body: JSON.stringify(body) });
-        } catch(e) {
-          $done({});
+  doka-check-sub-patch:
+    data: |
+      let body;
+      try {
+        body = JSON.parse($response.body);
+        if (body.data) {
+           body.data.is_vip = true;
+           body.data.hasSubscribed = true;
+           body.data.subscription_status = "pro";
+        } else {
+           body.is_vip = true;
+           body.hasSubscribed = true;
+           body.subscription_status = "pro";
         }
+        $done({ body: JSON.stringify(body) });
+      } catch(e) {
+        $done({});
+      }
