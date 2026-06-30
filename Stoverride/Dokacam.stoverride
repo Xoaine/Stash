@@ -1,7 +1,7 @@
-name: "🔓 Doka Cam Pro Override V3"
+name: "🔓 Doka Cam Pro Override V4"
 desc: "Unlock Doka Cam Pro (Intercept yindoka.com)"
 author: local
-version: "3.0"
+version: "4.0"
 
 http:
   ca: ""
@@ -9,15 +9,25 @@ http:
   mitm:
     - "*.yindoka.com"
     - "www.yindoka.com"
-  
-  script-providers:
-    doka-vip-patch:
-      # Sửa lại regex match để bắt CHÍNH XÁC url vip-detail từ screenshot
-      match: "https://www\\.yindoka\\.com/apple/vip-detail"
+
+  # ĐÂY LÀ PHẦN BỊ THIẾU Ở BẢN TRƯỚC: Khai báo ánh xạ URL với Script
+  script:
+    - match: "^https://www\\.yindoka\\.com/apple/vip-detail"
+      name: doka-vip-patch
       type: response
       require-body: true
       timeout: 10
-      script: |
+
+    - match: "^https://www\\.yindoka\\.com/apple/check-subscription-status"
+      name: doka-check-sub-patch
+      type: response
+      require-body: true
+      timeout: 10
+
+  # Định nghĩa nội dung Script
+  script-providers:
+    doka-vip-patch:
+      payload: |
         let body;
         try {
           body = JSON.parse($response.body);
@@ -28,11 +38,8 @@ http:
             body.data.remaining_count = 9999;
             body.data.remaining_filter_count = 9999;
             body.data.expire_time = "2099-12-31T23:59:59Z";
-            
-            // Xóa package free nếu có, thêm package fake pro
             body.data.packages = []; 
           } else {
-            // Đề phòng API trả về thẳng Object thay vì bọc trong data
             body.is_vip = true;
             body.vip_type = "pro";
             body.remaining_compose_count = 9999;
@@ -40,20 +47,13 @@ http:
             body.remaining_filter_count = 9999;
             body.expire_time = "2099-12-31T23:59:59Z";
           }
-          
-          $done({
-            body: JSON.stringify(body)
-          });
+          $done({ body: JSON.stringify(body) });
         } catch (e) {
           $done({});
         }
 
     doka-check-sub-patch:
-      match: "https://www\\.yindoka\\.com/apple/check-subscription-status"
-      type: response
-      require-body: true
-      timeout: 10
-      script: |
+      payload: |
         let body;
         try {
           body = JSON.parse($response.body);
