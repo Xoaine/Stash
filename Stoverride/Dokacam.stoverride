@@ -1,17 +1,13 @@
-name: "🔓 Doka Cam Pro Override"
+name: "🔓 Doka Cam Pro Override V2"
 desc: |-
   Intercept Apple StoreKit receipt verification + yindoka.com backend
   để fake pro subscription cho Doka Cam (id6751240418)
 author: "local"
-version: "1.0"
+version: "2.0"
 
-# ── HTTP Engine (MitM + Scripts) ────────────────────────────────
 http:
-  # CA certificate — để trống, Stash sẽ tự điền sau khi generate
   ca: ""
   ca-passphrase: ""
-
-  # Danh sách domain cần MitM decrypt
   mitm:
     - sandbox.itunes.apple.com
     - buy.itunes.apple.com
@@ -19,22 +15,18 @@ http:
     - www.yindoka.com
     - "*.yindoka.com"
 
-  # Scripts
   script-providers:
     doka-iap-spoof:
-      # Script 1: Fake Apple receipt verification response
       match: "^https://(sandbox|buy)\\.itunes\\.apple\\.com/verifyReceipt"
       type: response
       require-body: true
       timeout: 10
       script: |
         const now = Date.now();
-        const expires = 4102444800000; // 2099-12-31
-
+        const expires = 4102444800000;
         const txId = "20000009999" + String(now).slice(-7);
         const productId = "com.yindoka.dokacam.pro.monthly";
         const bundleId = "com.yindoka.dokacam";
-
         const payload = {
           status: 0,
           environment: "Sandbox",
@@ -43,56 +35,24 @@ http:
             bundle_id: bundleId,
             application_version: "1.0.0",
             receipt_creation_date_ms: String(now),
-            in_app: [
-              {
-                quantity: "1",
-                product_id: productId,
-                transaction_id: txId,
-                original_transaction_id: txId,
-                purchase_date_ms: String(now - 1000),
-                original_purchase_date_ms: String(now - 1000),
-                expires_date_ms: String(expires),
-                is_trial_period: "false",
-                is_in_intro_offer_period: "false",
-                in_app_ownership_type: "PURCHASED"
-              }
-            ]
+            in_app: [{
+                quantity: "1", product_id: productId, transaction_id: txId, original_transaction_id: txId,
+                purchase_date_ms: String(now - 1000), original_purchase_date_ms: String(now - 1000),
+                expires_date_ms: String(expires), is_trial_period: "false", is_in_intro_offer_period: "false", in_app_ownership_type: "PURCHASED"
+            }]
           },
-          latest_receipt_info: [
-            {
-              product_id: productId,
-              transaction_id: txId,
-              original_transaction_id: txId,
-              purchase_date_ms: String(now - 1000),
-              original_purchase_date_ms: String(now - 1000),
-              expires_date_ms: String(expires),
-              is_trial_period: "false",
-              is_in_intro_offer_period: "false",
-              in_app_ownership_type: "PURCHASED",
-              subscription_group_identifier: "20000001"
-            }
-          ],
+          latest_receipt_info: [{
+              product_id: productId, transaction_id: txId, original_transaction_id: txId,
+              purchase_date_ms: String(now - 1000), original_purchase_date_ms: String(now - 1000),
+              expires_date_ms: String(expires), is_trial_period: "false", is_in_intro_offer_period: "false",
+              in_app_ownership_type: "PURCHASED", subscription_group_identifier: "20000001"
+          }],
           latest_receipt: "STASH_DOKA_OVERRIDE",
-          pending_renewal_info: [
-            {
-              auto_renew_product_id: productId,
-              product_id: productId,
-              auto_renew_status: "1",
-              is_in_billing_retry_period: "0"
-            }
-          ]
+          pending_renewal_info: [{ auto_renew_product_id: productId, product_id: productId, auto_renew_status: "1", is_in_billing_retry_period: "0" }]
         };
-
-        $done({
-          status: 200,
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(payload)
-        });
+        $done({ status: 200, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
 
     doka-yindoka-override:
-      # Script 2: Patch bất kỳ JSON response nào từ yindoka.com
       match: "^https://(www\\.)?yindoka\\.com/"
       type: response
       require-body: true
@@ -116,17 +76,22 @@ http:
           const strKeys = [
             "plan","tier","type","level",
             "subscription_type","subscription_status",
-            "memberType","member_type"
+            "memberType","member_type","vip_type"
           ];
           const dateKeys = [
             "expires_at","expired_at","expire_time",
             "subscription_end","end_date","expireDate"
           ];
+          const intKeys = [
+            "remaining_compose_count", "remaining_count", "remaining_filter_count", "freeAIComposeCount", "freeAIFilterCount"
+          ];
+          
           for (const k of Object.keys(obj)) {
             if (boolKeys.includes(k)) { obj[k] = true; continue; }
             if (dateKeys.includes(k)) { obj[k] = "2099-12-31T23:59:59Z"; continue; }
             if (strKeys.includes(k) && typeof obj[k] === "string") { obj[k] = "pro"; continue; }
             if (strKeys.includes(k) && typeof obj[k] === "number") { obj[k] = 2; continue; }
+            if (intKeys.includes(k)) { obj[k] = 9999; continue; }
             if (typeof obj[k] === "object") patch(obj[k]);
           }
         }
